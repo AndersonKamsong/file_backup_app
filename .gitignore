@@ -1,0 +1,33 @@
+# Python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+.pytest_cache/
+
+# Virtual environment
+venv/
+env/
+
+# Test and coverage files
+.coverage
+.DS_Store
+
+# IDE files
+.idea/
+.vscode/
+
+# Flask-specific
+instance/
+.flask_session/
+
+# Build and distribution
+dist/
+build/
+*.egg-info/
+
+# Local and secret files
+local_config.py
+config.json  # or other config file formats
+secret_key.txt
+.env
