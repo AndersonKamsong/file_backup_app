@@ -1,4 +1,4 @@
-from config.DataSource import DataSource
+from backend.config.DataSource import DataSource
 
 
 class User:
