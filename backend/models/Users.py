@@ -1,6 +1,5 @@
 from backend.config.DataSource import DataSource
 
-
 class User:
     TABLE_NAME = "users"
 
@@ -38,6 +37,22 @@ class User:
             for result in results:
                 users.append(result)
             return users
+
+    def findByEmail(self, email=None):
+        if email:
+            query = f"SELECT * FROM {self.__class__.TABLE_NAME} WHERE email=%s"
+            result = self.ds.execute(query, (email,))
+            return result
+        else:
+            return None
+    
+    def findByUsername(self, name=None):
+        if name:
+            query = f"SELECT * FROM {self.__class__.TABLE_NAME} WHERE username=%s"
+            result = self.ds.execute(query, (name,))
+            return result
+        else:
+            return None
 
     def delete(self, id=None):
         # Delete by id
