@@ -7,26 +7,10 @@ from flet.core.view import View
 
 # from home import home_page
 
-
 def main(page: ft.Page):
     page.title = "Login and Registration"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-
-
-# The rout method to move from one view to the other
-    def route_change(e: RouteChangeEvent)->None:
-        page.views.clear()
-
-        page.views.append(
-            View(
-                route='/',
-                controls=[
-                    AppBar()
-                ]
-            )
-        )
-
 
     # Add a container to wrap the entire page with a gradient background
     gradient_background = ft.Container(
