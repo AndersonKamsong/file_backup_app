@@ -1,0 +1,2 @@
+import os
+controller = GitHubController(os.getenv("GITHUB_TOKEN"))
