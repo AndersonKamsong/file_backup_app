@@ -4,26 +4,28 @@ import random
 import string
 
 
-def login(email,password):
+def login_user(email,password):
     try:
         if not email or not password:
             return {"error": "Email and password are required"}
 
         # Find user by email
         user_found = User().findByEmail(email=email)
-
+        print(user_found)
         if not user_found:
             return {"error": "User not found"}
+        # print(user_found[0])
+        # print(user_found[0][4])
 
          # Check password
-        if not check_password_hash(user_found['password'], password):
+        if not check_password_hash(user_found[0][4], password):
             return {"error": "Invalid credentials"}
 
         return {"message": "Login successful", "user": user_found}
     except Exception as e:
         return {"error": str(e)}
   
-def register(username, email, password, role='user'):
+def register_user(username, email, password, role='user'):
     try:
         if not username or not email or not password:
             return {"error": "Username, email, and password are required"}
@@ -33,7 +35,7 @@ def register(username, email, password, role='user'):
         if existing_user:
             return {"error": "User with this email already exists"}
 
-        existing_user = User().findByUsername(email=email)
+        existing_user = User().findByUsername(name=username)
         if existing_user:
             return {"error": "User with this username already exists"}
 

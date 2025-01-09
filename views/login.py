@@ -1,5 +1,8 @@
 import flet as ft
 from views.register import register_page
+from views.home_view import home_page
+from backend.controllers.userController import * 
+# import views
 
  # Navigation function to switch between login and registration
 def show_registration(page):
@@ -7,15 +10,27 @@ def show_registration(page):
     register_page(page)
     page.update()
 
+def go_to_home(page,user):
+    page.clean()
+    home_page(page,user)
+    page.update()
+    
 login_msg = ft.Text("",size=14, weight=ft.FontWeight.BOLD, color="black")
 
 def login(page):
+    login_msg.value = ""
+    page.update()
     # Add your login logic here
     print(f"Logging in with email: {login_email.value} and password: {login_password.value}")
-    page.snack_bar = ft.SnackBar(ft.Text("Login successful!"))
-    login_msg.value = "Login successful!"
-    login_msg.color = "red"
-    # page.snack_bar.open()
+    result = login_user(email=login_email.value,password=login_password.value)
+    print(result)
+    if "error" in result:
+        login_msg.value = result['error']
+        login_msg.color = "red"
+    else:
+        login_msg.value = result['message']
+        login_msg.color = "green"
+        go_to_home(page,result['user'])
     page.update()
 
 login_email = ft.TextField(label="Email", width=300)
