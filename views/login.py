@@ -2,6 +2,7 @@ import flet as ft
 from views.register import register_page
 from views.home_view import home_page
 from backend.controllers.userController import * 
+import time
 # import views
 
  # Navigation function to switch between login and registration
@@ -27,11 +28,13 @@ def login(page):
     if "error" in result:
         login_msg.value = result['error']
         login_msg.color = "red"
+        page.update()
     else:
         login_msg.value = result['message']
         login_msg.color = "green"
+        page.update()
+        time.sleep(1)
         go_to_home(page,result['user'])
-    page.update()
 
 login_email = ft.TextField(label="Email", width=300)
 login_password = ft.TextField(label="Password", password=True, can_reveal_password=True, width=300)

@@ -2,6 +2,7 @@ import flet as ft
 # from views.login import signin_page
 import views
 from backend.controllers.userController import * 
+import time
 # Registration View
 def show_login(page):
     page.clean()
@@ -20,18 +21,21 @@ def register(page):
     if register_password.value != register_confirm_password.value:
         register_msg.value = "Password donot match!"
         register_msg.color = "red"
+        page.update()
     else:
         result = register_user(username=register_name.value, email=register_email.value, password=register_password.value)
         print(result)
         if "error" in result:
             register_msg.value = result['error']
             register_msg.color = "red"
+            page.update()
         else:
             register_msg.value = result['message']
             register_msg.color = "green"
-    page.update()
-
-
+            page.update()
+            time.sleep(1)
+            show_login(page) 
+        
 def register_page(page):
     page.add(
         ft.Column(
