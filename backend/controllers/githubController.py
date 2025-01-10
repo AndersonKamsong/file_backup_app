@@ -30,6 +30,88 @@ class GitHubController:
         }
         response = requests.post(url, json=payload, headers=self.headers)
         return response.json()
+    
+    def download_branch(self, repo_name, branch, restore_folder):
+        """
+        Download the entire contents of a specific branch to a given folder in the project directory.
+
+        :param repo_name: Name of the repository
+        :param branch: Name of the branch to download
+        :param restore_folder: The local folder where the branch contents should be restored
+        :return: Response message indicating success or failure
+        """
+        print("loging")
+        owner = self._get_authenticated_user()
+        if not owner:
+            return {"error": "Authentication failed. Cannot determine user."}
+
+        # Create the restore folder if it doesn't exist
+        print("login")
+        restore_path = restore_folder
+        if not os.path.exists(restore_path):
+            os.makedirs(restore_path)
+        print("login ok")
+        
+        # Start downloading the branch contents
+        self._download_directory_contents(owner, repo_name, branch, "", restore_path)
+
+        return {"message": f"Branch '{branch}' downloaded successfully to '{restore_path}'."}
+
+    def _download_directory_contents(self, owner, repo_name, branch, path, local_path):
+        """
+        Download the contents of a directory from the GitHub repository recursively.
+
+        :param owner: GitHub owner (username or organization)
+        :param repo_name: Name of the repository
+        :param branch: Branch name
+        :param path: Path to the current directory in the repository
+        :param local_path: Path to the local folder to store files
+        """
+        print("here")
+        url = f"{self.base_url}/repos/{owner}/{repo_name}/contents/{path}?ref={branch}"
+        response = requests.get(url, headers=self.headers)
+
+        if response.status_code != 200:
+            print(f"Error: {response.json()}")
+            return
+
+        contents = response.json()
+
+        # Iterate over the contents (files and subdirectories)
+        for item in contents:
+            file_path = item["path"]
+            local_file_path = os.path.join(local_path, item["name"])
+
+            if item["type"] == "file":
+                # It's a file, download it
+                self._download_file(owner, repo_name, file_path, local_file_path)
+            elif item["type"] == "dir":
+                # It's a directory, recurse into it
+                if not os.path.exists(local_file_path):
+                    os.makedirs(local_file_path)
+                self._download_directory_contents(owner, repo_name, branch, file_path, local_file_path)
+
+    def _download_file(self, owner, repo_name, file_path, local_file_path):
+        """
+        Download a single file from the repository and save it locally.
+
+        :param owner: GitHub owner (username or organization)
+        :param repo_name: Name of the repository
+        :param file_path: Path of the file in the repository
+        :param local_file_path: Local path to save the file
+        """
+        url = f"{self.base_url}/repos/{owner}/{repo_name}/contents/{file_path}"
+        response = requests.get(url, headers=self.headers)
+
+        if response.status_code == 200:
+            file_data = response.json()
+            content = base64.b64decode(file_data["content"])
+
+            # Write the file to the local directory
+            with open(local_file_path, "wb") as f:
+                f.write(content)
+        else:
+            print(f"Error downloading {file_path}: {response.json()}")
 
     def create_branch(self, repo_name, folder_path):
         """
@@ -62,6 +144,29 @@ class GitHubController:
         }
         response = requests.post(url, json=payload, headers=self.headers)
         return {'branch_info':response.json(),'branch_name':branch_name}
+
+    def delete_branch(self, repo_name, branch):
+        """
+        Delete a specific branch in the given repository.
+
+        :param repo_name: Name of the repository
+        :param branch: Name of the branch to delete
+        :return: Response JSON or error message
+        """
+        owner = self._get_authenticated_user()
+        if not owner:
+            return {"error": "Authentication failed. Cannot determine user."}
+
+        # URL for deleting the branch
+        url = f"{self.base_url}/repos/{owner}/{repo_name}/git/refs/heads/{branch}"
+
+        # Send DELETE request
+        response = requests.delete(url, headers=self.headers)
+
+        if response.status_code == 204:
+            return {"success": f"Branch '{branch}' deleted successfully from repository '{repo_name}'."}
+        else:
+            return {"error": f"Failed to delete branch '{branch}'. Error: {response.json()}"}
 
     def add_folder_to_branch(self, repo_name, folder_path, branch):
         """
