@@ -2,7 +2,6 @@ from backend.controllers.githubController import GitHubController
 from backend.models.Branch import Branch  
 
 # file_backup_token = "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"
-file_backup_token = "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"
 
 controller = GitHubController(file_backup_token)
 # file_path = "/home/anderson/Desktop/python/file_backup_app/views"
