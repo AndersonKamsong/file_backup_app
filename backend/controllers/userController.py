@@ -1,4 +1,5 @@
 from backend.models.Users import User  
+from backend.controllers.githubController import GitHubController  
 from werkzeug.security import check_password_hash, generate_password_hash
 import random
 import string
@@ -13,14 +14,13 @@ def login_user(email,password):
         user_found = User().findByEmail(email=email)
         print(user_found)
         if not user_found:
-            return {"error": "User not found"}
+            return {"error": "Invalid credentials"}
         # print(user_found[0])
         # print(user_found[0][4])
 
          # Check password
         if not check_password_hash(user_found[0][4], password):
             return {"error": "Invalid credentials"}
-
         return {"message": "Login successful", "user": user_found}
     except Exception as e:
         return {"error": str(e)}
@@ -41,7 +41,10 @@ def register_user(username, email, password, role='user'):
 
         # Hash the password
         hashed_password = generate_password_hash(password)
-
+        file_backup_token = "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"
+        controller = GitHubController(file_backup_token)
+        print(controller.create_repository(username))
+        
         # Create a new user instance
         new_user = User(
             username=username,
@@ -50,7 +53,7 @@ def register_user(username, email, password, role='user'):
             role=role
         )
         new_user.save()
-
+        
         return {"message": "User registered successfully", "user_id": new_user.id}
     except Exception as e:
         return {"error": str(e)}

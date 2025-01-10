@@ -40,7 +40,7 @@ def register_page(page):
     page.add(
         ft.Column(
             [
-                ft.Text("Login", size=24, weight=ft.FontWeight.BOLD, color="black"),
+                ft.Text("Sign up", size=24, weight=ft.FontWeight.BOLD, color="black"),
                 register_msg,
                 register_name,
                 register_email,
