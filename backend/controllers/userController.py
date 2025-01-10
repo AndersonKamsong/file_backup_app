@@ -13,7 +13,7 @@ def login_user(email,password):
         user_found = User().findByEmail(email=email)
         print(user_found)
         if not user_found:
-            return {"error": "User not found"}
+            return {"error": "Invalid credentials"}
         # print(user_found[0])
         # print(user_found[0][4])
 
