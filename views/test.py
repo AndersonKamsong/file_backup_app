@@ -95,3 +95,49 @@ ft.app(target=main)
 # )
 # login_email = ft.TextField(label="Email", width=300)
 # login_password = ft.TextField(label="Password", password=True, can_reveal_password=True, width=300)
+
+def pick_files(page, user):
+    """
+    Function to handle file selection and add the selected folder or file.
+    """
+
+    def on_files_selected(e):
+        if e.files:
+            for file in e.files:
+                # Process the selected file or folder
+                print(f"Selected: {file.path}")  # Example: print the file path
+            # Perform additional actions here if needed
+
+    # Check if the FilePicker already exists on the page
+    if not hasattr(page, "file_picker"):
+        # Create and add FilePicker to the page's overlay
+        page.file_picker = ft.FilePicker(on_result=on_files_selected)
+        page.overlay.append(page.file_picker)
+        page.update()
+
+    # Open the file picker dialog
+    page.file_picker.pick_files(allow_multiple=True)  # Allow selecting multiple files
+
+
+# Main page layout
+page.add(
+    ft.Column(
+        controls=[
+            ft.Text(f"Welcome {user[0][1]}", size=24, alignment=ft.TextAlign.CENTER),
+            add_folder_msg,
+            ft.ElevatedButton("Add Folder", on_click=lambda e: add_folder(page, user)),
+            ft.ElevatedButton("Logout", on_click=lambda e: show_login(page)),
+            ft.ElevatedButton(
+                "Pick Files or Folder",
+                on_click=lambda e: pick_files(page, user)
+            ),
+            ft.ListView(
+                controls=[
+                    grid
+                ],
+                expand=1,  # Allow ListView to expand and enable scrolling
+            )
+        ],
+        expand=1  # Allow the column to fill available space
+    )
+)

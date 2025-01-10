@@ -1,7 +1,7 @@
 from backend.controllers.githubController import GitHubController  
 from backend.models.Branch import Branch  
 
-# file_backup_token = "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"
+file_backup_token = "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"
 
 controller = GitHubController(file_backup_token)
 # file_path = "/home/anderson/Desktop/python/file_backup_app/views"
@@ -31,7 +31,7 @@ def create_branch_from_folder(user,folder_path):
 def backup_to_branch(user,branch_name):
     try:
         branch_found = Branch().findByUserAndName(user_id=user[0][0],branch_name=branch_name)
-        print(branch_found)
+        # print(branch_found)
         if not branch_found:
             return {"error": "Branch donot exists"}
         

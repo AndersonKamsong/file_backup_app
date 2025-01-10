@@ -1,4 +1,5 @@
 import flet as ft
+from flet import FilePicker, TextField, Column, ElevatedButton, ListView, Text, Checkbox, Row
 import views
 from backend.controllers.homeController import * 
 import time
@@ -13,7 +14,7 @@ def show_login(page):
 def add_folder(page,user):
     folder_path = "/home/anderson/Desktop/python/file_backup_app/storage3"
     result = create_branch_from_folder(user,folder_path)
-    print(result)
+    # print(result)
     if "error" in result:
         add_folder_msg.value = result['error']
         add_folder_msg.color = "red"
@@ -30,7 +31,7 @@ def add_folder(page,user):
 def restore_branch_fun(page,user,branch_name,):
     folder_path = "/home/anderson/Desktop/python/file_backup_app/storage_restore2"
     result = restore_branch(user,branch_name,folder_path)
-    print(result)
+    # print(result)
     if "error" in result:
         add_folder_msg.value = result['error']
         add_folder_msg.color = "red"
@@ -74,7 +75,7 @@ def delete_branch_fun(page,user,branch_name):
         
 def get_branch_list(user_id):
     result =  get_user_branch(user_id)
-    print(result)
+    # print(result)
     if "error" in result:
         return []
     else:
@@ -82,7 +83,10 @@ def get_branch_list(user_id):
     
 def on_button_click(name,branch_name):
     print(f"{name} {branch_name}")
+
+
 def home_page(page,user):
+    selected_folder = None
     user_branch = get_branch_list(user[0][0])
     grid = ft.Column(
         controls=[
@@ -104,19 +108,48 @@ def home_page(page,user):
         ]
     )
     
+    def pick_folder(page, user):
+        """
+        Function to handle folder selection and process the selected folder.
+        """ 
+        def on_folder_selected(e):
+            print(e)
+            if e.files:
+                for file in e.files:
+                    # Process the selected file or folder
+                    print(f"Selected: {file.path}")  # Example: print the file path
+                # Perform additional actions here if neede
+
+        # Check if the FilePicker already exists on the page
+        if not hasattr(page, "file_picker"):
+            # Create and add FilePicker to the page's overlay
+            page.folder_picker = ft.FilePicker(on_result=on_folder_selected)
+            page.overlay.append(page.folder_picker)
+            page.update()
+
+        # Open the folder picker dialog
+        page.folder_picker.pick_files()  # Allow selecting multiple files
+
+    # Main page layout
     page.add(
-        ft.Column([
-            ft.Text(f"Welcome {user[0][1]} ", size=24),
-            add_folder_msg,
-            ft.ElevatedButton("Add Folder", on_click=lambda e: add_folder(page, user)),
-            ft.ElevatedButton("Logout", on_click=lambda e: show_login(page)),
-            ft.ListView(  # This makes the column scrollable
-                controls=[
-                    grid
-                ],
-                expand=1,  # Allow the ListView to take up available space
-                # scroll=ft.ScrollMode.AUTO  # Enable scrolling when content exceeds the screen height
-            )
-        ], expand=1)  # Allow the column to expand and fill available space
+        ft.Column(
+            controls=[
+                ft.Text(f"Welcome {user[0][1]}", size=24),
+                add_folder_msg,
+                ft.ElevatedButton("Add Folder", on_click=lambda e: add_folder(page, user)),
+                ft.ElevatedButton("Logout", on_click=lambda e: show_login(page)),
+                ft.ElevatedButton(
+                    "Pick Files or Folder",
+                    on_click=lambda e: pick_folder(page, user)
+                ),
+                ft.ListView(
+                    controls=[
+                        grid
+                    ],
+                    expand=1,  # Allow ListView to expand and enable scrolling
+                )
+            ],
+            expand=1  # Allow the column to fill available space
+        )
     )
 
