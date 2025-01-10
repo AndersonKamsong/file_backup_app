@@ -31,3 +31,4 @@ local_config.py
 config.json  # or other config file formats
 secret_key.txt
 .env
+storage*/

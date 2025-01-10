@@ -16,6 +16,7 @@ def go_to_home(page,user):
     home_page(page,user)
     page.update()
     
+
 login_msg = ft.Text("",size=14, weight=ft.FontWeight.BOLD, color="black")
 
 def login(page):
