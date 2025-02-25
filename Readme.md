@@ -18,7 +18,7 @@ Ensure you have the following installed on your system:
 ### Setup
 1. Clone the repository:
    ```sh
-   git clone <repo_url>
+   git clone https://github.com/AndersonKamsong/file_backup_app
    cd file_backup_app
    ```
 2. Create and activate a virtual environment:
