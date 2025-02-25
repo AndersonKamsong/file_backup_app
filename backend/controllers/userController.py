@@ -3,7 +3,11 @@ from backend.controllers.githubController import GitHubController
 from werkzeug.security import check_password_hash, generate_password_hash
 import random
 import string
+import os
+from dotenv import load_dotenv
 
+# Load .env variables
+load_dotenv()
 
 def login_user(email,password):
     try:
@@ -41,7 +45,7 @@ def register_user(username, email, password, role='user'):
 
         # Hash the password
         hashed_password = generate_password_hash(password)
-        file_backup_token = "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"
+        file_backup_token = os.getenv("FILE_BACKUP_TOKEN")
         controller = GitHubController(file_backup_token)
         print(controller.create_repository(username))
         

@@ -1,7 +1,12 @@
 from backend.controllers.githubController import GitHubController  
 from backend.models.Branch import Branch  
+import os
+from dotenv import load_dotenv
 
-file_backup_token = "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"
+# Load .env variables
+load_dotenv()
+
+file_backup_token = os.getenv("FILE_BACKUP_TOKEN")
 
 controller = GitHubController(file_backup_token)
 # file_path = "/home/anderson/Desktop/python/file_backup_app/views"

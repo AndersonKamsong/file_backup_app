@@ -16,11 +16,11 @@ class Branch:
         """
         if self.branch_id:
             # Update the branch if it exists
-            query = f"UPDATE {self.__class__.TABLE_NAME} SET user_id=%s, branch_name=%s, folder_path=%s WHERE branch_id=%s"
+            query = f"UPDATE {self.__class__.TABLE_NAME} SET user_id=?, branch_name=?, folder_path=? WHERE branch_id=?"
             self.ds.execute(query, (self.user_id, self.branch_name, self.folder_path, self.branch_id))
         else:
             # Create a new branch
-            query = f"INSERT INTO {self.__class__.TABLE_NAME} (user_id, branch_name, folder_path) VALUES (%s, %s, %s)"
+            query = f"INSERT INTO {self.__class__.TABLE_NAME} (user_id, branch_name, folder_path) VALUES (?, ?, ?)"
             self.ds.execute(query, (self.user_id, self.branch_name, self.folder_path))
             results = self.ds.execute(f"SELECT MAX(branch_id) FROM {self.__class__.TABLE_NAME}")
             for result in results:
@@ -32,7 +32,7 @@ class Branch:
         Retrieve branch details. If no branch_id is provided, fetch all branches.
         """
         if branch_id:
-            query = f"SELECT * FROM {self.__class__.TABLE_NAME} WHERE branch_id=%s"
+            query = f"SELECT * FROM {self.__class__.TABLE_NAME} WHERE branch_id=?"
             result = self.ds.execute(query, (branch_id,))
             return result
         else:
@@ -48,7 +48,7 @@ class Branch:
         Retrieve all branches associated with a specific user.
         """
         if user_id:
-            query = f"SELECT * FROM {self.__class__.TABLE_NAME} WHERE user_id=%s"
+            query = f"SELECT * FROM {self.__class__.TABLE_NAME} WHERE user_id=?"
             results = self.ds.execute(query, (user_id,))
             return results
         else:
@@ -59,7 +59,7 @@ class Branch:
         Retrieve a branch by its name.
         """
         if branch_name and user_id:
-            query = f"SELECT * FROM {self.__class__.TABLE_NAME} WHERE branch_name=%s and user_id=%s"
+            query = f"SELECT * FROM {self.__class__.TABLE_NAME} WHERE branch_name=? and user_id=?"
             result = self.ds.execute(query, (branch_name,user_id,))
             return result
         else:
@@ -70,7 +70,7 @@ class Branch:
         Delete a branch by its ID or all branches if no ID is provided.
         """
         if branch_id:
-            query = f"DELETE FROM {self.__class__.TABLE_NAME} WHERE branch_id=%s"
+            query = f"DELETE FROM {self.__class__.TABLE_NAME} WHERE branch_id=?"
             self.ds.execute(query, (branch_id,))
             print("Branch deleted successfully")
         else:
